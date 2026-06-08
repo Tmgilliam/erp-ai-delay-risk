@@ -72,6 +72,15 @@ See [docs/phase4-changelog.md](docs/phase4-changelog.md) and [docs/azure-deploym
 
 Defaults unchanged: `ENTRA_AUTH_ENABLED=false`, `AUTH_MODE=env`. See [docs/entra-apim-readiness.md](docs/entra-apim-readiness.md).
 
+## Phase 6 — GCP Platform Layer (Companion Projects)
+
+| Project | GitHub | What It Proves |
+|---------|--------|----------------|
+| GCP Enterprise Data Pipeline | [gcp-enterprise-data-pipeline](https://github.com/Tmgilliam/gcp-enterprise-data-pipeline) | BigQuery medallion, Vertex AI Feature Store, ML training pipelines |
+| GCP Microservices + Apigee | [gcp-microservices-api-gateway](https://github.com/Tmgilliam/gcp-microservices-api-gateway) | Service decomposition, API gateway governance, circuit breaker |
+
+See [docs/gcp-platform-roadmap.md](docs/gcp-platform-roadmap.md) for how these projects feed the same delay risk model at enterprise scale. Phase 1 trained locally; Phase 6+ is the data platform and microservices infrastructure underneath production inference.
+
 ## Project Structure
 
 ```
@@ -105,6 +114,8 @@ erp-ai-delay-risk/
 │   ├── phase3-changelog.md
 │   ├── phase4-changelog.md
 │   ├── phase5-changelog.md
+│   ├── phase6-changelog.md
+│   ├── gcp-platform-roadmap.md
 │   └── entra-apim-readiness.md
 ├── config/
 │   ├── apim/                      # APIM policies + OpenAPI (apply when paid)
