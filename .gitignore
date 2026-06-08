@@ -1,0 +1,15 @@
+# Runtime scoring history (regenerate via API runs or seed script)
+monitoring/scoring_history.csv
+
+# Entra registration output (contains tenant/client IDs)
+config/entra/generated.env
+
+# Batch pipeline output
+data/scored_orders_output.csv
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/

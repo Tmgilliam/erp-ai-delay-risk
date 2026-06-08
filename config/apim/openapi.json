@@ -1,0 +1,195 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "ERP AI Delay Risk API",
+    "description": "Production inference service for ERP shipment delay risk prediction.",
+    "version": "2.0.0"
+  },
+  "servers": [
+    {
+      "url": "{{APIM_GATEWAY_URL}}/v1",
+      "description": "Azure API Management gateway (enable when subscription active)"
+    },
+    {
+      "url": "{{API_BACKEND_URL}}",
+      "description": "Container Apps API (direct — dev/portfolio)"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health check",
+        "operationId": "health",
+        "responses": {
+          "200": {
+            "description": "Service healthy"
+          }
+        }
+      }
+    },
+    "/predict": {
+      "post": {
+        "summary": "Real-time single-order delay risk scoring",
+        "operationId": "predict",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Prediction result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PredictionResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/predict/batch": {
+      "post": {
+        "summary": "Batch delay risk scoring",
+        "operationId": "predictBatch",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/OrderPayload"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Batch prediction results"
+          }
+        }
+      }
+    },
+    "/monitoring/drift-report": {
+      "get": {
+        "summary": "Feature drift detection report",
+        "operationId": "driftReport",
+        "parameters": [
+          {
+            "name": "threshold",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "default": 0.05
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Drift report JSON"
+          }
+        }
+      }
+    },
+    "/monitoring/scoring-history": {
+      "get": {
+        "summary": "Persisted scoring trend for executive dashboard",
+        "operationId": "scoringHistory",
+        "parameters": [
+          {
+            "name": "trend_days",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 30
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Scoring history summary"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "OrderPayload": {
+        "type": "object",
+        "required": [
+          "order_id",
+          "customer_id",
+          "item_id",
+          "plant",
+          "order_date",
+          "requested_ship_date",
+          "promised_ship_date",
+          "order_priority",
+          "order_qty",
+          "current_available_qty",
+          "historical_lead_time_days",
+          "supplier_reliability_score",
+          "num_open_orders_customer",
+          "past_due_invoices_flag",
+          "weekday_ordered",
+          "month_ordered"
+        ],
+        "properties": {
+          "order_id": { "type": "string" },
+          "customer_id": { "type": "string" },
+          "item_id": { "type": "string" },
+          "plant": { "type": "string" },
+          "order_date": { "type": "string", "format": "date" },
+          "requested_ship_date": { "type": "string", "format": "date" },
+          "promised_ship_date": { "type": "string", "format": "date" },
+          "order_priority": { "type": "integer", "minimum": 1, "maximum": 5 },
+          "order_qty": { "type": "integer" },
+          "current_available_qty": { "type": "integer" },
+          "historical_lead_time_days": { "type": "number" },
+          "supplier_reliability_score": { "type": "number" },
+          "num_open_orders_customer": { "type": "integer" },
+          "past_due_invoices_flag": { "type": "integer" },
+          "weekday_ordered": { "type": "integer" },
+          "month_ordered": { "type": "integer" }
+        }
+      },
+      "PredictionResult": {
+        "type": "object",
+        "properties": {
+          "order_id": { "type": "string" },
+          "late_flag_pred": { "type": "integer" },
+          "late_probability": { "type": "number" }
+        }
+      }
+    },
+    "securitySchemes": {
+      "oauth2": {
+        "type": "oauth2",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://login.microsoftonline.com/{{ENTRA_TENANT_ID}}/oauth2/v2.0/authorize",
+            "tokenUrl": "https://login.microsoftonline.com/{{ENTRA_TENANT_ID}}/oauth2/v2.0/token",
+            "scopes": {
+              "api://{{ENTRA_API_CLIENT_ID}}/predict": "Score ERP orders for delay risk"
+            }
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "oauth2": ["api://{{ENTRA_API_CLIENT_ID}}/predict"]
+    }
+  ]
+}

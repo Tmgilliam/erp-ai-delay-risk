@@ -1,0 +1,61 @@
+{
+  "apiApp": {
+    "displayName": "ERP AI Delay Risk API",
+    "identifierUri": "api://{{ENTRA_API_CLIENT_ID}}",
+    "appRoles": [
+      {
+        "allowedMemberTypes": ["User"],
+        "description": "Executive dashboard access — full risk summary view",
+        "displayName": "EXEC",
+        "id": "00000000-0000-0000-0000-000000000001",
+        "isEnabled": true,
+        "value": "EXEC"
+      },
+      {
+        "allowedMemberTypes": ["User"],
+        "description": "Operations team — scoring and batch workflows",
+        "displayName": "OPS",
+        "id": "00000000-0000-0000-0000-000000000002",
+        "isEnabled": true,
+        "value": "OPS"
+      },
+      {
+        "allowedMemberTypes": ["User"],
+        "description": "Analyst — read-only monitoring and KPIs",
+        "displayName": "ANALYST",
+        "id": "00000000-0000-0000-0000-000000000003",
+        "isEnabled": true,
+        "value": "ANALYST"
+      }
+    ],
+    "oauth2Permissions": [
+      {
+        "adminConsentDescription": "Score ERP orders for shipment delay risk",
+        "adminConsentDisplayName": "Predict delay risk",
+        "id": "00000000-0000-0000-0000-000000000010",
+        "isEnabled": true,
+        "type": "User",
+        "userConsentDescription": "Allow the app to score orders for delay risk",
+        "value": "predict"
+      }
+    ]
+  },
+  "dashboardApp": {
+    "displayName": "ERP AI Delay Risk Dashboard",
+    "requiredResourceAccess": [
+      {
+        "resourceAppId": "{{ENTRA_API_CLIENT_ID}}",
+        "resourceAccess": [
+          {
+            "id": "00000000-0000-0000-0000-000000000010",
+            "type": "Scope"
+          }
+        ]
+      }
+    ],
+    "publicClientRedirectUris": [
+      "https://login.microsoftonline.com/common/oauth2/nativeclient",
+      "http://localhost:8501"
+    ]
+  }
+}

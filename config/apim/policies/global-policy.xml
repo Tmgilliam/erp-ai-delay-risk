@@ -1,0 +1,29 @@
+<!--
+  APIM Global Policy — ERP AI Delay Risk
+  Apply when APIM subscription is active.
+  Portal: API Management → APIs → All APIs → Design → Inbound processing → </>
+-->
+<policies>
+  <inbound>
+    <base />
+    <!-- Correlation ID for cross-service tracing -->
+    <set-header name="X-Correlation-Id" exists-action="skip">
+      <value>@(Guid.NewGuid().ToString())</value>
+    </set-header>
+    <!-- Default rate limit per subscription key (adjust per environment) -->
+    <rate-limit calls="200" renewal-period="60" />
+    <quota calls="10000" renewal-period="86400" />
+  </inbound>
+  <backend>
+    <base />
+  </backend>
+  <outbound>
+    <base />
+    <set-header name="X-ERP-AI-Gateway" exists-action="override">
+      <value>APIM</value>
+    </set-header>
+  </outbound>
+  <on-error>
+    <base />
+  </on-error>
+</policies>

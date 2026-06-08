@@ -1,0 +1,22 @@
+<!--
+  APIM Operation Policy — POST /predict
+  Stricter rate limit for inference endpoint.
+-->
+<policies>
+  <inbound>
+    <base />
+    <rate-limit calls="60" renewal-period="60" />
+    <set-header name="X-ERP-AI-Operation" exists-action="override">
+      <value>predict</value>
+    </set-header>
+  </inbound>
+  <backend>
+    <base />
+  </backend>
+  <outbound>
+    <base />
+  </outbound>
+  <on-error>
+    <base />
+  </on-error>
+</policies>

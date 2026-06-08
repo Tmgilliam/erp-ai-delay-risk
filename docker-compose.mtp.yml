@@ -1,0 +1,29 @@
+# MTP local stack — Phase 2/3 app/ layout (portfolio working copy)
+# Phase 1 Cloud Run deployment still uses docker-compose.yml + src/
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.mtp.api
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./monitoring:/app/monitoring
+      - ./data:/app/data
+    environment:
+      - MODEL_PATH=/app/models/delay_model.pkl
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.mtp.dashboard
+    ports:
+      - "8501:8501"
+    environment:
+      - API_URL=http://api:8000
+      - DASH_USER=demo@erp-ai.local
+      - DASH_PASS=demo1234
+      - DASH_ROLE=EXEC
+    depends_on:
+      - api

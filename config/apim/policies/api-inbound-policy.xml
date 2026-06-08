@@ -1,0 +1,43 @@
+<!--
+  APIM API Inbound Policy — ERP Delay Risk API
+  Backend: Container Apps API FQDN
+
+  ENTRA READY: Uncomment validate-jwt block after Entra app registration.
+  Set {{ENTRA_TENANT_ID}} and {{ENTRA_API_AUDIENCE}} before applying.
+-->
+<policies>
+  <inbound>
+    <base />
+    <set-backend-service base-url="{{API_BACKEND_URL}}" />
+
+    <!--
+    <validate-jwt header-name="Authorization" failed-validation-httpcode="401"
+                  failed-validation-error-message="Unauthorized">
+      <openid-config url="https://login.microsoftonline.com/{{ENTRA_TENANT_ID}}/v2.0/.well-known/openid-configuration" />
+      <audiences>
+        <audience>{{ENTRA_API_AUDIENCE}}</audience>
+      </audiences>
+      <required-claims>
+        <claim name="roles" match="any">
+          <value>EXEC</value>
+          <value>OPS</value>
+          <value>ANALYST</value>
+        </claim>
+      </required-claims>
+    </validate-jwt>
+    -->
+
+    <rate-limit calls="100" renewal-period="60" />
+    <rewrite-uri template="/" copy-unmatched-params="true" />
+  </inbound>
+  <backend>
+    <base />
+    <forward-request timeout="120" />
+  </backend>
+  <outbound>
+    <base />
+  </outbound>
+  <on-error>
+    <base />
+  </on-error>
+</policies>
