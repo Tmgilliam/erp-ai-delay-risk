@@ -76,6 +76,7 @@ Defaults unchanged: `ENTRA_AUTH_ENABLED=false`, `AUTH_MODE=env`. See [docs/entra
 
 | Project | GitHub | What It Proves |
 |---------|--------|----------------|
+| **GCP ERP AI Platform (umbrella)** | [gcp-erp-ai-platform](https://github.com/Tmgilliam/gcp-erp-ai-platform) | All three layers — one standalone clone with submodules |
 | GCP Enterprise Data Pipeline | [gcp-enterprise-data-pipeline](https://github.com/Tmgilliam/gcp-enterprise-data-pipeline) | BigQuery medallion, Vertex AI Feature Store, ML training pipelines |
 | GCP Microservices + Apigee | [gcp-microservices-api-gateway](https://github.com/Tmgilliam/gcp-microservices-api-gateway) | Service decomposition, API gateway governance, circuit breaker |
 

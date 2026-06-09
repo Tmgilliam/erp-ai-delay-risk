@@ -26,6 +26,7 @@ Phase 1 deployed a monolithic FastAPI inference service to Cloud Run. Phases 2â€
 
 | Project | Repo | What It Proves |
 |---------|------|----------------|
+| **GCP ERP AI Platform (umbrella)** | [github.com/Tmgilliam/gcp-erp-ai-platform](https://github.com/Tmgilliam/gcp-erp-ai-platform) | All three layers in one standalone clone |
 | **ERP AI Delay Risk** | [github.com/Tmgilliam/erp-ai-delay-risk](https://github.com/Tmgilliam/erp-ai-delay-risk) | Production ML deployment on Cloud Run |
 | **GCP Enterprise Data Pipeline** | [github.com/Tmgilliam/gcp-enterprise-data-pipeline](https://github.com/Tmgilliam/gcp-enterprise-data-pipeline) | Data lake, warehouse, Feature Store, ML pipelines |
 | **GCP Microservices + Apigee** | [github.com/Tmgilliam/gcp-microservices-api-gateway](https://github.com/Tmgilliam/gcp-microservices-api-gateway) | Microservices decomposition, API gateway governance |
