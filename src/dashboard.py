@@ -88,12 +88,13 @@ with top_right:
         st.session_state.role = None
         st.rerun()
 
-with st.expander("🔧 Debug", expanded=False):
-    st.write("API_URL:", API_URL)
-    st.write("DASH_USER set?:", bool(DASH_USER))
-    st.write("DASH_PASS set?:", bool(DASH_PASS))
-    st.write("Role:", DASH_ROLE)
-    st.write("Running from:", __file__)
+if DEBUG_UI:
+    with st.expander("🔧 Debug", expanded=False):
+        st.write("API_URL:", API_URL)
+        st.write("DASH_USER set?:", bool(DASH_USER))
+        st.write("DASH_PASS set?:", bool(DASH_PASS))
+        st.write("Role:", DASH_ROLE)
+        st.write("Running from:", __file__)
 
 
 # ============================================================

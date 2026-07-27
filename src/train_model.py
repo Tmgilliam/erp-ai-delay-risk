@@ -20,11 +20,15 @@ def main():
     # Target column from generate_data.py
     target_col = "late_flag"
 
-    # Features = everything except the target
-    X = df.drop(columns=[target_col])
+    # Features = everything except the target and non-generalisable columns.
+    # Date strings and order_id are dropped to keep the training feature set
+    # consistent with what api.py and inference.py can provide at scoring time.
+    # Time-based signals are already captured by weekday_ordered and month_ordered.
+    DROP_COLS = ["late_flag", "order_id", "order_date", "requested_ship_date", "promised_ship_date"]
+    X = df.drop(columns=[c for c in DROP_COLS if c in df.columns])
     y = df[target_col]
 
-    print("🧮 One-hot encoding categorical features...")
+    print("One-hot encoding categorical features...")
     X = pd.get_dummies(X, drop_first=True)
 
     print("🔀 Splitting train/test...")
