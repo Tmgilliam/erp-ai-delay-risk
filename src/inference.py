@@ -32,10 +32,11 @@ def score_order(order_payload: dict) -> dict:
     df = df.drop(columns=[c for c in _DROP_BEFORE_ENCODE if c in df.columns])
     df = pd.get_dummies(df)
 
-    for col in model_cols:
-        if col not in df.columns:
-            df[col] = 0
-    df = df[model_cols]
+    # Vectorized reindex instead of a per-column assignment loop: functionally
+    # identical (missing one-hot columns filled with 0, ordered to model_cols),
+    # but avoids a pandas 3.x Arrow-string-array slow path that made the old
+    # column-by-column loop hang on this dataframe shape.
+    df = df.reindex(columns=model_cols, fill_value=0)
 
     proba = float(model.predict_proba(df)[:, 1][0])
     return {
