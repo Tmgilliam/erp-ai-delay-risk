@@ -1,38 +1,45 @@
 from pathlib import Path
-import json
 
 import joblib
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
-MODELS_DIR = ROOT / "models"
+MODEL_PATH = ROOT / "models" / "delay_model.pkl"
 
-MODEL_PATH = MODELS_DIR / "delay_model.pkl"
-FEATURE_COLS_PATH = MODELS_DIR / "feature_columns.json"
+# train_model.py saves a bundle: {"model": clf, "columns": [...]}
+_bundle = joblib.load(MODEL_PATH)
+model = _bundle["model"]
+model_cols = _bundle["columns"]
 
-# Load model & metadata once at import
-model = joblib.load(MODEL_PATH)
-feature_cols = json.loads(FEATURE_COLS_PATH.read_text())
+# Columns that are identifiers or raw date strings — same list as api.py
+_DROP_BEFORE_ENCODE = {"order_id", "order_date", "requested_ship_date", "promised_ship_date"}
 
 
 def score_order(order_payload: dict) -> dict:
     """
-    order_payload: dict with same keys as training features.
-    Returns: { "late_probability": float, "late_flag": int }
+    Score a single order dict.
+
+    Parameters
+    ----------
+    order_payload : dict
+        Keys matching OrderPayload fields (order_id, order_date, etc.).
+
+    Returns
+    -------
+    dict with keys: late_probability (float), late_flag (int)
     """
     df = pd.DataFrame([order_payload])
+    df = df.drop(columns=[c for c in _DROP_BEFORE_ENCODE if c in df.columns])
+    df = pd.get_dummies(df)
 
-    # Ensure same columns as during training
-    for col in feature_cols:
-        if col not in df.columns:
-            df[col] = None
+    # Vectorized reindex instead of a per-column assignment loop: functionally
+    # identical (missing one-hot columns filled with 0, ordered to model_cols),
+    # but avoids a pandas 3.x Arrow-string-array slow path that made the old
+    # column-by-column loop hang on this dataframe shape.
+    df = df.reindex(columns=model_cols, fill_value=0)
 
-    df = df[feature_cols]
-
-    proba = model.predict_proba(df)[:, 1][0]
-    flag = int(proba >= 0.5)
-
+    proba = float(model.predict_proba(df)[:, 1][0])
     return {
-        "late_probability": float(proba),
-        "late_flag": flag,
+        "late_probability": proba,
+        "late_flag": int(proba >= 0.5),
     }
